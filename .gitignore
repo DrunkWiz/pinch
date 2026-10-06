@@ -1,0 +1,11 @@
+# Personal learning context (kept out of commits)
+/devpost/learner-profile.md
+
+# Local credentials
+.env
+.env.*
+!.env.example
+
+# Dependencies and build output
+node_modules/
+dist/

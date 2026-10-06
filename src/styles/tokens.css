@@ -1,0 +1,50 @@
+/* Design tokens — from prd.md > Look and Feel. Light mode only. */
+:root {
+  --paper: #faf6ee;
+  --ink: #2b2927;
+  --ink-soft: #6b655e;
+  --pinch-ink: #2b4c7e;
+  --accent: #c25a38;
+  --accent-dark: #a2472a;
+  --rule: #e6e0d4;
+  --margin-line: #e8c4c4;
+  --ok: #3f7a4f;
+
+  --font-ui: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Lora', Georgia, serif;
+  --font-hand: 'Caveat', 'Patrick Hand', cursive;
+  --font-note: 'Patrick Hand', 'Caveat', cursive;
+
+  color-scheme: light;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  -webkit-text-size-adjust: 100%;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}

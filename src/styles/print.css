@@ -1,0 +1,42 @@
+/* Print shows only the card, keeping the notebook look. */
+@media print {
+  @page {
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff;
+  }
+
+  .no-print,
+  .toast {
+    display: none !important;
+  }
+
+  .card-screen {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .card {
+    max-width: none;
+    box-shadow: none;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .row,
+  .unknown-box {
+    break-inside: avoid;
+  }
+
+  /* Keep the two-column layout on paper even if the print width is narrow. */
+  .row {
+    grid-template-columns: 65fr 35fr;
+  }
+  .margin {
+    border-left: 1px dashed var(--margin-line);
+    padding-left: 12px;
+  }
+}
