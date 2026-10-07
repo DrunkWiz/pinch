@@ -36,7 +36,7 @@ Success: a real dish, recorded end to end, produces a card with no invented amou
 Movement is linear: Start → Session → Card. There's no going back to edit a finished session. If it goes wrong, they start a new one.
 
 ## Look and Feel
-Strict functional split: **plain and high-contrast while cooking, warm and tactile on the card.**
+**Warm notebook, everywhere.** *(Amended during build: the learner found the plain session screen too dull and chose a notebook look for the whole app. Kitchen legibility is kept through the big question, big mic and large tap targets.)* Every screen is a page from the family recipe book: lined paper, a pink margin line, handwriting for titles and her words, and a terracotta question card.
 
 - **Colours**
   - `#FAF6EE` soft linen/cream: the background everywhere, on both the session screen and the card.
@@ -50,7 +50,7 @@ Strict functional split: **plain and high-contrast while cooking, warm and tacti
   - Card title and margin notes: `Caveat` / `Patrick Hand` (handwriting).
   - Card body (ingredients and method): `Lora` (serif, cookbook weight).
   - Never use handwriting fonts for paragraphs or quantities.
-- **Session screen:** flat cream background with no paper texture or lines. The question is **32–36pt bold**, white on a terracotta banner. The mic is a large pulsing terracotta circle, visible from across the counter.
+- **Session screen:** lined notebook page with a handwriting title. The question is **32–36pt bold**, white on a slightly tilted terracotta card. Her words appear in blue handwriting. A **"Recipe so far"** list fills in as steps are captured, with ✓ for settled and ? for still unknown. The mic is a large pulsing terracotta circle, visible from across the counter.
 - **Card:** a centred card with 16px rounded corners, a subtle shadow (`0 8px 24px rgba(0,0,0,0.06)`) and the pink margin line on the left. The title is in Caveat at about 36pt, tilted -1°.
 - **Avoid:** a generic AI-app look and cold digital white.
 
@@ -112,7 +112,7 @@ Source: `scope.md > The POC Boundary`.
 - **"I don't know" is spoken.** It sends the item to Still Unknown, with no argument.
 - **A tick plus Next step when a step is clear.** Pinch staying quiet is part of the demo.
 - **A Finish button available any time.** The cook decides when the recipe is done.
-- **Strict visual split:** high contrast while cooking, a warm notebook for the card.
+- **Warm notebook throughout** (changed during build from a strict split). The plain kitchen screen looked dull. Legibility comes from size and contrast, not plainness.
 - **The card keeps a cookable structure (Ingredients and Method) *and* the kernel (her voice and reasons in the margin, plus the Still Unknown box).** Transcripts alone aren't cookable, and structure alone would make Pinch a generic parser.
 - **Large question text (32–36pt).** It's the moment a judge has to read on video.
 - **Never block on a lost connection.** Cooking doesn't pause for weak Wi-Fi. An unreachable Pinch is treated like "I don't know".

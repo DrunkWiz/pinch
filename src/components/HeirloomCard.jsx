@@ -29,7 +29,7 @@ export default function HeirloomCard({ card }) {
       <h2 className="card-section">Ingredients</h2>
       {card.ingredients.length === 0 && <p className="row-empty">No ingredients were mentioned.</p>}
       {card.ingredients.map((ing, i) => (
-        <div className="row" key={`i${i}`}>
+        <div className="row" key={`i${i}`} style={{ '--i': i + 1 }}>
           <div className="line">
             <span className="bullet" aria-hidden="true">•</span>
             <span>
@@ -50,7 +50,7 @@ export default function HeirloomCard({ card }) {
 
       <h2 className="card-section">Method</h2>
       {card.method.map((m, i) => (
-        <div className="row" key={`m${i}`}>
+        <div className="row" key={`m${i}`} style={{ '--i': card.ingredients.length + i + 2 }}>
           <div className="line">
             <span className="num">{i + 1}.</span>
             <span>
@@ -62,7 +62,7 @@ export default function HeirloomCard({ card }) {
         </div>
       ))}
 
-      <section className="unknown-box" aria-label="Still unknown">
+      <section className="unknown-box" aria-label="Still unknown" style={{ '--i': card.ingredients.length + card.method.length + 3 }}>
         <h2>Still unknown</h2>
         {card.stillUnknown.length === 0 ? (
           <p className="unknown-none">Nothing — every amount came from the cook.</p>

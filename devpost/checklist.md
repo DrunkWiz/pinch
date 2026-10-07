@@ -87,3 +87,4 @@ Activity mode:
 - API server port comes from `PINCH_PORT`, not `PORT` — the preview tool sets `PORT` for Vite, so the server took Vite's port and `/api` forwarding broke.
 - Small UI additions: the mic also acts as Next step once a step is resolved (fewer taps with messy hands), a "Questions n/3" counter in the header, and a "Start a new recipe" link on the card screen (with a confirm). None of these change the PRD flow.
 - Card de-duplication — her reason and "she clarified" showed both inline and in the margin. The margin is now the single place for her voice.
+- Warm notebook look across the whole app, plus a "Recipe so far" list and an animated card reveal — the learner found the first UI ugly and chose this from three mockups. It replaces the PRD's plain-session/warm-card split. The PRD and spec are updated.

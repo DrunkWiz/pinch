@@ -7,6 +7,7 @@ import QuestionBanner from '../components/QuestionBanner.jsx'
 import TranscriptBox from '../components/TranscriptBox.jsx'
 import MicButton from '../components/MicButton.jsx'
 import Toast from '../components/Toast.jsx'
+import RecipeSoFar from '../components/RecipeSoFar.jsx'
 
 export default function SessionScreen({ session, dispatch }) {
   const step = currentStep(session)
@@ -135,15 +136,20 @@ export default function SessionScreen({ session, dispatch }) {
       <Toast message={session.toast} onDismiss={dismissToast} />
 
       <header className="session-head">
-        <strong>{title}</strong>
-        <span className="budget">
-          Questions {session.questionsAsked}/{MAX_QUESTIONS}
+        <h1 className="session-title">{title}</h1>
+        <span className="budget" aria-label={`${session.questionsAsked} of ${MAX_QUESTIONS} questions asked`}>
+          questions
+          {Array.from({ length: MAX_QUESTIONS }, (_, i) => (
+            <span key={i} className={`budget-dot${i < session.questionsAsked ? ' used' : ''}`} />
+          ))}
         </span>
       </header>
 
       <QuestionBanner step={step} hint={session.hint} isFirst={session.steps.length === 0} />
 
       {step && <TranscriptBox step={step} onRecheck={recheck} />}
+
+      <RecipeSoFar steps={session.steps} />
 
       {micError && <p className="notice">{micError}</p>}
       {session.cardStatus === 'error' && (
@@ -186,7 +192,7 @@ export default function SessionScreen({ session, dispatch }) {
         <button type="button" className="btn" onClick={() => dispatch({ type: 'NEXT_STEP' })} disabled={!resolved || recording}>
           Next step
         </button>
-        <button type="button" className="btn btn-primary" onClick={finish} disabled={!canFinish}>
+        <button type="button" className="btn btn-ink" onClick={finish} disabled={!canFinish}>
           Finish
         </button>
       </div>

@@ -14,11 +14,16 @@ export default function StartScreen({ dispatch }) {
   }
 
   return (
-    <form className="screen" onSubmit={start}>
-      <h1 className="brand">Pinch</h1>
+    <form className="screen start" onSubmit={start}>
+      <div>
+        <h1 className="brand">Pinch</h1>
+        <svg className="brand-underline" viewBox="0 0 170 14" fill="none" aria-hidden="true">
+          <path d="M3 9c30-6 62-7 92-4s50 3 72-2" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+        </svg>
+      </div>
       <p className="tagline">
-        Record a family recipe while it’s being cooked. Pinch asks about “a pinch” and “a splash” while the answer is
-        still in the pot.
+        Keep a family recipe while it’s being cooked. Pinch asks what “a pinch” and “a splash” mean while the answer
+        is still in the pot.
       </p>
       <label className="field">
         Dish
@@ -29,8 +34,9 @@ export default function StartScreen({ dispatch }) {
         <input value={cook} onChange={(e) => setCook(e.target.value)} placeholder="Betty Cooper" autoComplete="off" />
       </label>
       <button className="btn btn-primary btn-big" type="submit" disabled={!ready}>
-        Start
+        Start cooking
       </button>
+      <p className="start-note">Hold the phone, let them cook — Pinch does the asking.</p>
     </form>
   )
 }

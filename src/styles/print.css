@@ -17,6 +17,14 @@
   .card-screen {
     min-height: 0;
     padding: 0;
+    background: #fff;
+  }
+
+  .card,
+  .card-title,
+  .row,
+  .unknown-box {
+    animation: none !important;
   }
 
   .card {
