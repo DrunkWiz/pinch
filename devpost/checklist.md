@@ -9,7 +9,7 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
 
 ## Slices
 
-- [ ] **1. Type a step and Pinch either ticks it or asks one question**
+- [x] **1. Type a step and Pinch either ticks it or asks one question**
   Becomes usable: On the laptop, you fill in Dish and Cook, tap Start, type a step like "add a splash of milk, not too much", and Pinch shows a big terracotta question ("How much is a splash?"). A clear step gets a tick and Next step instead.
   Why now: This is the kernel, so it goes first, and slice 1 also has to prove the whole path (React app → Express server → Gemini → back) with the real key and model. Typed input comes first because it's the fallback anyway, and it keeps the riskier audio work separate.
   PRD ref: `prd.md > Starting a Session`, `prd.md > Pinch's Check (the kernel)`, `prd.md > Typed Fallback`
@@ -19,7 +19,7 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
   Learner check: Run `npm run dev`, open http://localhost:5173, start "Pancakes / Betty Cooper", type a vague step and then a clear one, and say whether Pinch's questions sound like something you'd want asked in a kitchen.
   Commit: `Add typed step check with Gemini`
 
-- [ ] **2. Record a step by voice, on your iPhone**
+- [x] **2. Record a step by voice, on your iPhone**
   Becomes usable: Tap the big pulsing mic, say the step, tap again. "Pinch is listening back…", then her exact words appear in the transcript box with the tick or question. Works on the laptop and on the iPhone in Chrome through the tunnel.
   Why now: The biggest unknown in the spec is whether Gemini accepts the iPhone's `audio/mp4` recordings. Finding out now means the rest of the build stands on a voice path that's known to work, or switches to the WAV fallback while it's cheap.
   PRD ref: `prd.md > Recording a Step`, `prd.md > States and Boundaries` (Pinch is thinking, nothing heard, mic blocked)
@@ -29,7 +29,7 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
   Learner check: On the laptop, record "add a splash of milk" and see your words and Pinch's question. Then run the tunnel, open the https link in Chrome on your iPhone, allow the mic, and do the same. Tell me if your words came back accurately.
   Commit: `Add voice recording with Gemini transcription`
 
-- [ ] **3. A full session: Pinch asks aloud, she answers, and the budget holds**
+- [x] **3. A full session: Pinch asks aloud, she answers, and the budget holds**
   Becomes usable: You can run a whole recipe. The question is read aloud. She answers by voice (or "I don't know"), and Pinch moves on. Next step starts the next one. After 3 questions Pinch goes quiet and vague items go to Still Unknown. Editing a transcript gives a Re-check button. If Pinch can't be reached, a toast appears and the session carries on.
   Why now: With the check and voice both proven, this closes the loop the demo depends on, and it locks in the budget and "no follow-up to a follow-up" as plain, tested code before the card relies on that data.
   PRD ref: `prd.md > Answering a Question`, `prd.md > Pinch's Check (the kernel)` (budget, read aloud), `prd.md > Recording a Step` (manual edit re-check), `prd.md > States and Boundaries` (Pinch can't be reached, budget used up)
@@ -39,7 +39,7 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
   Learner check: Run a 4–5 step pancake session out loud on the laptop or iPhone. Hear the question spoken, answer one, say "I don't know" to another, and notice Pinch go quiet after 3 questions. Tell me if the pacing feels like a conversation or a nag.
   Commit: `Add answer loop, spoken questions, and question budget`
 
-- [ ] **4. Finish gives the heirloom card, every amount traced to her words, ready to print**
+- [x] **4. Finish gives the heirloom card, every amount traced to her words, ready to print**
   Becomes usable: Tap Finish to get the notebook card: title in handwriting, Ingredients and Method on the left, her quotes and reasons in blue in the margin, and the Still Unknown box at the bottom. Print shows just the card.
   Why now: The card is the payoff, and the never-guess check is the rule that makes Pinch trustworthy. It needs the real session data from slice 3 to be meaningful.
   PRD ref: `prd.md > Finishing and the Heirloom Card`, `prd.md > Printing`, `prd.md > Look and Feel`
@@ -88,3 +88,6 @@ Activity mode:
 - Small UI additions: the mic also acts as Next step once a step is resolved (fewer taps with messy hands), a "Questions n/3" counter in the header, and a "Start a new recipe" link on the card screen (with a confirm). None of these change the PRD flow.
 - Card de-duplication — her reason and "she clarified" showed both inline and in the margin. The margin is now the single place for her voice.
 - Warm notebook look across the whole app, plus a "Recipe so far" list and an animated card reveal — the learner found the first UI ugly and chose this from three mockups. It replaces the PRD's plain-session/warm-card split. The PRD and spec are updated.
+- Gemini model fallback chain (`gemini-3.5-flash` → `gemini-3.8-flash` → `gemini-3.1-flash-lite`), with a 15s cap per attempt — on first real use, `gemini-flash-latest` returned 503 "high demand". Busy or slow models now fall through to the next. The phone's step/answer timeout went from 20s to 30s to leave room for one fallback. The default model is no longer `gemini-flash-latest`.
+- Card Still Unknown de-duplication and capitalised ingredient names — real Gemini output repeated an item using her "I don't know" answer as the phrase. The card prompt now gets the existing unknowns, and the never-guess check skips duplicates (with a test).
+- Slice 2's iPhone check is deferred to the final review (cloudflared not installed yet). Mechanically verified with Windows TTS WAV clips: the step transcribed verbatim, and the answers classified correctly as answered / don't know.

@@ -90,3 +90,22 @@ describe('never-guess check', () => {
     expect(normalize('don’t')).toBe(" don't ")
   })
 })
+
+describe('Still Unknown tidy-up', () => {
+  it('skips a duplicate that only repeats her "I don\'t know" answer, and capitalises names', () => {
+    const s = {
+      ...session,
+      steps: [...session.steps, { transcript: 'Cook until golden', question: 'How golden?', answer: { transcript: "I don't know, I just do it by feel", outcome: 'dont_know' } }],
+      stillUnknown: [{ item: 'Cooking cue', herWords: 'until golden', reason: 'dont_know' }],
+    }
+    const card = checkCard(
+      draft({
+        ingredients: [{ name: 'salt', amount: 'a pinch', herWords: '', confirmed: false }],
+        stillUnknown: [{ item: 'Golden colour', herWords: "I don't know, I just do it by feel", note: 'she didn’t know' }],
+      }),
+      s,
+    )
+    expect(card.stillUnknown.map((u) => u.item)).not.toContain('Golden colour')
+    expect(card.ingredients[0].name).toBe('Salt')
+  })
+})

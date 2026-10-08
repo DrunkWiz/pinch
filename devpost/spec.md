@@ -56,7 +56,7 @@ iPhone (Chrome)                    Laptop                         Google
 | Tests | **Vitest**, for the never-guess check and budget logic only | These are the two places correctness matters, and plain unit tests prove them. | https://vitest.dev |
 | Fonts | Google Fonts: Inter, Lora, Caveat, Patrick Hand | From `prd.md > Look and Feel`. | https://fonts.google.com |
 
-**Model:** set by `GEMINI_MODEL` in `.env`, defaulting to the `gemini-flash-latest` alias. **Unverified:** the current Flash model name and its free-tier limits. Check on the models page at the start of the build. **Fallback:** the learner's paid multi-model key. The model is a single setting in `server/gemini.js`.
+**Model:** a fallback chain in `server/gemini.js`: `gemini-3.5-flash` → `gemini-3.8-flash` → `gemini-3.1-flash-lite`, 15s per attempt, moving on when a model is busy (503/429). `GEMINI_MODEL` in `.env` puts a chosen model first. *(Revised in build: `gemini-flash-latest` was overloaded on first use.)* **Unverified:** the current Flash model name and its free-tier limits. Check on the models page at the start of the build. **Fallback:** the learner's paid multi-model key. The model is a single setting in `server/gemini.js`.
 
 ## Where It Runs and How Someone Tries It
 

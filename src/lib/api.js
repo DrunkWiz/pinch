@@ -20,6 +20,7 @@ async function post(url, body, timeoutMs) {
   }
 }
 
-export const postStep = (body) => post('/api/step', body, 20_000)
-export const postAnswer = (body) => post('/api/answer', body, 20_000)
+// 30s leaves room for the server to fall back to a second model when one is busy.
+export const postStep = (body) => post('/api/step', body, 30_000)
+export const postAnswer = (body) => post('/api/answer', body, 30_000)
 export const postCard = (body) => post('/api/card', body, 45_000)

@@ -2,8 +2,18 @@ import { GoogleGenAI } from '@google/genai'
 import { STEP_PROMPT, ANSWER_PROMPT, CARD_PROMPT } from './prompts.js'
 import { STEP_SCHEMA, ANSWER_SCHEMA, CARD_SCHEMA } from './schemas.js'
 
-// One setting to swap models (or point at the paid key's model later).
-export const MODEL = process.env.GEMINI_MODEL || 'gemini-flash-latest'
+// Models tried in order. A busy or rate-limited model (503/429) falls through to
+// the next, so a demand spike doesn't stall a cook mid-recipe.
+// GEMINI_MODEL in .env puts a model of your choice first.
+const FALLBACKS = ['gemini-3.5-flash', 'gemini-3.8-flash', 'gemini-3.1-flash-lite']
+export const MODELS = [...new Set([process.env.GEMINI_MODEL, ...FALLBACKS].filter(Boolean))]
+export const MODEL = MODELS[0]
+
+const ATTEMPT_MS = 15_000 // give up on a stuck model and try the next
+const isBusy = (err) =>
+  err?.name === 'AbortError' ||
+  err?.name === 'TimeoutError' ||
+  /"code":\s*(429|500|503)|UNAVAILABLE|RESOURCE_EXHAUSTED|overloaded|aborted/i.test(String(err?.message))
 
 let client
 function ai() {
@@ -16,16 +26,27 @@ function ai() {
 
 // Ask Gemini for JSON matching `schema`. `parts` is text and/or inline audio.
 async function askJSON(prompt, parts, schema) {
-  const res = await ai().models.generateContent({
-    model: MODEL,
-    contents: [{ role: 'user', parts: [{ text: prompt }, ...parts] }],
-    config: {
-      responseMimeType: 'application/json',
-      responseJsonSchema: schema,
-      temperature: 0.2,
-    },
-  })
-  return JSON.parse(res.text)
+  let lastErr
+  for (const model of MODELS) {
+    try {
+      const res = await ai().models.generateContent({
+        model,
+        contents: [{ role: 'user', parts: [{ text: prompt }, ...parts] }],
+        config: {
+          responseMimeType: 'application/json',
+          responseJsonSchema: schema,
+          temperature: 0.2,
+          abortSignal: AbortSignal.timeout(ATTEMPT_MS),
+        },
+      })
+      return JSON.parse(res.text)
+    } catch (err) {
+      lastErr = err
+      if (!isBusy(err)) throw err
+      console.warn(`[gemini] ${model} busy or slow, trying next model`)
+    }
+  }
+  throw lastErr
 }
 
 // The cook's words come in as audio ({ mimeType, data: base64 }) or typed text.
@@ -65,14 +86,17 @@ export async function interpretAnswer({ question, stepTranscript, audio, text })
   return { transcript, outcome, value: value || null }
 }
 
-export async function draftCard({ dish, cook, steps }) {
+export async function draftCard({ dish, cook, steps, stillUnknown = [] }) {
   const lines = steps.map((s, i) => {
     let line = `Step ${i + 1}: "${s.transcript}"`
     if (s.question) line += `\n  Pinch asked: "${s.question}"`
     if (s.answer?.transcript) line += `\n  Cook answered: "${s.answer.transcript}" (${s.answer.outcome})`
     return line
   })
-  return askJSON(CARD_PROMPT, [{ text: `Dish: ${dish}. Cook: ${cook}.\n\n${lines.join('\n')}` }], CARD_SCHEMA)
+  const known = stillUnknown.length
+    ? `\n\nAlready on the Still Unknown list (don't repeat these):\n${stillUnknown.map((u) => `- ${u.item}: "${u.herWords}"`).join('\n')}`
+    : ''
+  return askJSON(CARD_PROMPT, [{ text: `Dish: ${dish}. Cook: ${cook}.\n\n${lines.join('\n')}${known}` }], CARD_SCHEMA)
 }
 
 const norm = (s = '') => s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()

@@ -40,7 +40,7 @@ app.post('/api/answer', route('answer', async (b) => {
 app.post('/api/card', route('card', async (b) => {
   const steps = (b.steps ?? []).filter((s) => s.transcript)
   if (!steps.length) throw new Error('No steps to build a card from')
-  const draft = await draftCard({ dish: b.dish, cook: b.cook, steps })
+  const draft = await draftCard({ dish: b.dish, cook: b.cook, steps, stillUnknown: b.stillUnknown })
   return checkCard(draft, { dish: b.dish, cook: b.cook, steps, stillUnknown: b.stillUnknown })
 }))
 

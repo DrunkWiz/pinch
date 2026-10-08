@@ -57,12 +57,17 @@ const key = (s = '') => normalize(s).trim()
 export function checkCard(draft, session) {
   const { traces, inventsNumber } = makeTracer(session.steps ?? [])
   const stillUnknown = []
+  const answers = new Set((session.steps ?? []).map((s) => key(s.answer?.transcript)).filter(Boolean))
   const addUnknown = (item, herWords, note) => {
     if (stillUnknown.some((u) => key(u.item) === key(item))) return
+    // Same phrase already listed, or the "phrase" is only her answer to Pinch: skip the duplicate.
+    if (herWords && (answers.has(key(herWords)) || stillUnknown.some((u) => u.herWords && key(u.herWords) === key(herWords)))) return
     stillUnknown.push({ item, herWords: herWords && traces(herWords) ? herWords : '', note })
   }
 
-  const ingredients = (draft.ingredients ?? []).map((ing) => {
+  const capitalise = (s = '') => s.charAt(0).toUpperCase() + s.slice(1)
+  const ingredients = (draft.ingredients ?? []).map((raw) => {
+    const ing = { ...raw, name: capitalise(String(raw.name ?? '').trim()) }
     const herWords = ing.herWords && traces(ing.herWords) ? ing.herWords : ''
     const amount = (ing.amount ?? '').trim()
     if (amount && traces(amount)) return { name: ing.name, amount, herWords, confirmed: Boolean(ing.confirmed) }
