@@ -10,8 +10,9 @@ const dateLabel = (iso) => {
   }
 }
 
-export default function RecipeLibrary({ recipes, onOpen, onDelete }) {
+export default function RecipeLibrary({ recipes, onOpen, onDelete, onClearAll }) {
   const [armed, setArmed] = useState(null)
+  const [clearArmed, setClearArmed] = useState(false)
 
   if (!recipes.length) {
     return (
@@ -24,7 +25,17 @@ export default function RecipeLibrary({ recipes, onOpen, onDelete }) {
 
   return (
     <section className="library" aria-label="Your recipes">
-      <h2 className="library-label">Your recipes</h2>
+      <div className="library-head">
+        <h2 className="library-label">Your recipes</h2>
+        <button
+          type="button"
+          className={`library-clear${clearArmed ? ' armed' : ''}`}
+          onClick={() => (clearArmed ? (onClearAll(), setClearArmed(false)) : setClearArmed(true))}
+          onBlur={() => setClearArmed(false)}
+        >
+          {clearArmed ? 'Clear all recipes?' : 'Clear all'}
+        </button>
+      </div>
       <ul>
         {recipes.map((r) => {
           const unknown = r.card.stillUnknown?.length ?? 0

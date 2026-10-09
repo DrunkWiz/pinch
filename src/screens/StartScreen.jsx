@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { unlockSpeech } from '../lib/speak.js'
-import { deleteRecipe, loadRecipes } from '../lib/library.js'
+import { clearRecipes, deleteRecipe, loadRecipes } from '../lib/library.js'
 import RecipeLibrary from '../components/RecipeLibrary.jsx'
 
 export default function StartScreen({ dispatch }) {
@@ -44,6 +44,10 @@ export default function StartScreen({ dispatch }) {
         onOpen={(r) => dispatch({ type: 'OPEN_SAVED', card: r.card, savedId: r.id })}
         onDelete={(id) => {
           deleteRecipe(id)
+          setRecipes(loadRecipes())
+        }}
+        onClearAll={() => {
+          clearRecipes()
           setRecipes(loadRecipes())
         }}
       />

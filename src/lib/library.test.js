@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { deleteRecipe, loadRecipes, saveRecipe } from './library.js'
+import { clearRecipes, deleteRecipe, loadRecipes, saveRecipe } from './library.js'
 
 const card = (title) => ({ title, ingredients: [], method: [], marginNotes: [], stillUnknown: [] })
 
@@ -32,6 +32,13 @@ describe('recipe library', () => {
     saveRecipe(card('B'))
     deleteRecipe(a.id)
     expect(loadRecipes().map((r) => r.card.title)).toEqual(['B'])
+  })
+
+  it('clears every card', () => {
+    saveRecipe(card('A'))
+    saveRecipe(card('B'))
+    clearRecipes()
+    expect(loadRecipes()).toEqual([])
   })
 
   it('survives corrupt storage', () => {

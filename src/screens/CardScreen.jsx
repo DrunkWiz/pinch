@@ -12,15 +12,21 @@ export default function CardScreen({ session, dispatch }) {
     <main className="card-screen">
       <HeirloomCard card={session.card} />
       <div className="card-actions no-print">
-        <p className={`saved-note${saved ? '' : ' unsaved'}`}>
-          {saved ? '✓ Saved to Your recipes on this device' : 'Not saved — this browser won’t store it. Print to keep it.'}
-        </p>
+        {!session.fromLibrary && (
+          <p className={`saved-note${saved ? '' : ' unsaved'}`}>
+            {saved ? '✓ Saved to Your recipes on this device' : 'Not saved — this browser won’t store it. Print to keep it.'}
+          </p>
+        )}
         <button type="button" className="btn btn-primary btn-big" onClick={() => window.print()}>
           Print
         </button>
-        {saved ? (
+        {session.fromLibrary ? (
           <button type="button" className="btn" onClick={leave}>
-            Your recipes · start new
+            ← Back to your recipes
+          </button>
+        ) : saved ? (
+          <button type="button" className="btn" onClick={leave}>
+            Start a new recipe
           </button>
         ) : confirming ? (
           <div className="confirm" role="alertdialog" aria-label="Leave without saving?">

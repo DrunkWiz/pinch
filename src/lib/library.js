@@ -42,3 +42,7 @@ export function saveRecipe(card) {
 export function deleteRecipe(id) {
   return write(loadRecipes().filter((r) => r.id !== id))
 }
+
+export function clearRecipes() {
+  return write([])
+}

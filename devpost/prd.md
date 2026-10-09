@@ -97,7 +97,8 @@ Source: `scope.md > What "Working" Looks Like`.
 - [ ] A finished card is saved automatically to **Your recipes** in this browser. The card screen shows "✓ Saved to Your recipes on this device".
 - [ ] The Start screen lists saved cards under **Your recipes**, newest first, with the date and how many items are still unknown.
 - [ ] Tapping a saved card reopens it, ready to print.
-- [ ] Delete takes two taps (× → "Delete?") so a card isn't lost by accident.
+- [ ] Delete takes two taps (× → "Delete?") so a card isn't lost by accident. **Clear all** next to the heading also takes two taps ("Clear all" → "Clear all recipes?").
+- [ ] A card opened from Your recipes shows **"← Back to your recipes"**. A just-finished card shows "✓ Saved to Your recipes" and **"Start a new recipe"**.
 - [ ] Empty library: "Finished cards are saved here on this device."
 - [ ] If the browser won't store it (private mode, blocked storage), the card screen says "Not saved — print to keep it", and leaving asks first.
 

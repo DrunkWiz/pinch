@@ -12,6 +12,7 @@ export const initialSession = {
   stillUnknown: [],
   card: null,
   savedId: null, // set when the card is in Your recipes
+  fromLibrary: false, // opened from Your recipes rather than just finished
   cardStatus: 'idle', // 'idle' | 'building' | 'error'
   toast: null,
   hint: null,
@@ -128,7 +129,7 @@ export function sessionReducer(s, a) {
       return { ...s, screen: 'card', card: a.card, savedId: a.savedId ?? null, cardStatus: 'idle' }
 
     case 'OPEN_SAVED':
-      return { ...initialSession, screen: 'card', card: a.card, savedId: a.savedId }
+      return { ...initialSession, screen: 'card', card: a.card, savedId: a.savedId, fromLibrary: true }
 
     case 'CARD_ERROR':
       return { ...s, cardStatus: 'error' }
