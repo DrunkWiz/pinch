@@ -20,7 +20,8 @@ async function post(url, body, timeoutMs) {
   }
 }
 
-// 30s leaves room for the server to fall back to a second model when one is busy.
-export const postStep = (body) => post('/api/step', body, 30_000)
-export const postAnswer = (body) => post('/api/answer', body, 30_000)
-export const postCard = (body) => post('/api/card', body, 45_000)
+// Longer than the server's whole fallback chain (3 models x 15s), so a reply that
+// arrives via the last model isn't thrown away by the phone.
+export const postStep = (body) => post('/api/step', body, 50_000)
+export const postAnswer = (body) => post('/api/answer', body, 50_000)
+export const postCard = (body) => post('/api/card', body, 60_000)

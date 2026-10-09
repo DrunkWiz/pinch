@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 // Her words for the current step. Editable as a backup; a changed transcript
 // shows Re-check so Pinch looks at the corrected text.
@@ -6,6 +6,15 @@ import { useEffect, useState } from 'react'
 export default function TranscriptBox({ step, onRecheck }) {
   const [draft, setDraft] = useState(step.transcript)
   useEffect(() => setDraft(step.transcript), [step.id, step.transcript])
+
+  // Grow to fit her words, so a long step is never cut off in a scrolling box.
+  const box = useRef(null)
+  useLayoutEffect(() => {
+    const el = box.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = `${el.scrollHeight + 2}px`
+  }, [draft])
 
   const busy = step.status === 'thinking' || step.status === 'answering'
   const editable = !busy && !['answered', 'offline'].includes(step.status)
@@ -15,6 +24,8 @@ export default function TranscriptBox({ step, onRecheck }) {
     <div className="transcript">
       <span className="transcript-label">Her words</span>
       <textarea
+        ref={box}
+        rows={2}
         value={busy && !draft ? '' : draft}
         placeholder={busy ? '…' : ''}
         onChange={(e) => setDraft(e.target.value)}

@@ -329,7 +329,8 @@
 
 .transcript textarea {
   width: 100%;
-  min-height: 96px;
+  min-height: 72px;
+  overflow: hidden;
   padding: 6px 4px;
   font-family: var(--font-note);
   font-size: 24px;
