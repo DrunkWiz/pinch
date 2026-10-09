@@ -1,6 +1,6 @@
 // The top of the session screen: Pinch's question, the tick, or a quiet hint.
 
-export default function QuestionBanner({ step, hint, isFirst }) {
+export default function QuestionBanner({ step, hint, isFirst, typed }) {
   if (step?.status === 'thinking' || step?.status === 'answering') {
     return (
       <div className="banner banner-thinking" role="status">
@@ -11,7 +11,11 @@ export default function QuestionBanner({ step, hint, isFirst }) {
 
   if (step?.status === 'asking') {
     return (
-      <div className="banner banner-question" role="status" aria-live="assertive">
+      <div
+        className="banner banner-question"
+        role="status"
+        aria-live="assertive"
+      >
         <span className="banner-label">Pinch asks</span>
         <p className="q">{step.question}</p>
       </div>
@@ -21,7 +25,9 @@ export default function QuestionBanner({ step, hint, isFirst }) {
   if (step && ['clear', 'answered'].includes(step.status)) {
     return (
       <div className="banner banner-clear" role="status">
-        <span className="tick" aria-hidden="true">✓</span>
+        <span className="tick" aria-hidden="true">
+          ✓
+        </span>
         {step.status === 'answered' ? 'Got it — thank you' : 'Clear — got it'}
       </div>
     )
@@ -30,14 +36,20 @@ export default function QuestionBanner({ step, hint, isFirst }) {
   if (step && ['unknown', 'offline'].includes(step.status)) {
     return (
       <div className="banner banner-quiet" role="status">
-        Saved to <strong>&nbsp;Still unknown&nbsp;</strong> — ask about it next time.
+        Saved to <strong>&nbsp;Still unknown&nbsp;</strong> — ask about it next
+        time.
       </div>
     )
   }
 
   return (
     <div className="banner banner-quiet" role="status">
-      {hint ?? (isFirst ? 'Tap the mic and describe the first step' : 'Tap the mic and describe the next step')}
+      {hint ??
+        (typed
+          ? `Describe the ${isFirst ? 'first' : 'next'} step in the cook’s own words.`
+          : isFirst
+            ? 'Tap the mic and describe the first step'
+            : 'Tap the mic and describe the next step')}
     </div>
   )
 }

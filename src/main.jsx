@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import './styles/tokens.css'
 import './styles/session.css'
 import './styles/card.css'
+import './styles/design.css'
 import './styles/print.css'
 import App from './App.jsx'
 

@@ -17,12 +17,12 @@ export default function TranscriptBox({ step, onRecheck }) {
   }, [draft])
 
   const busy = step.status === 'thinking' || step.status === 'answering'
-  const editable = !busy && !['answered', 'offline'].includes(step.status)
+  const editable = !busy && step.status !== 'answered'
   const changed = draft.trim() && draft.trim() !== step.transcript.trim()
 
   return (
     <div className="transcript">
-      <span className="transcript-label">Her words</span>
+      <span className="transcript-label">In their own words</span>
       <textarea
         ref={box}
         rows={2}
@@ -34,11 +34,19 @@ export default function TranscriptBox({ step, onRecheck }) {
       />
       {step.answer?.transcript && (
         <p className="answer-line">
-          <strong>Her answer:</strong> “{step.answer.transcript}”
+          <strong>
+            Their answer
+            {step.answer.outcome === 'unverified' ? ' (not checked)' : ''}:
+          </strong>{' '}
+          “{step.answer.transcript}”
         </p>
       )}
       {editable && changed && (
-        <button type="button" className="btn" onClick={() => onRecheck(draft.trim())}>
+        <button
+          type="button"
+          className="btn"
+          onClick={() => onRecheck(draft.trim())}
+        >
           Re-check
         </button>
       )}

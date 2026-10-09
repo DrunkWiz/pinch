@@ -25,6 +25,8 @@ const route = (name, fn) => async (req, res) => {
 
 const hasSpeech = (b) => Boolean(b.audio?.data) || Boolean(b.text?.trim())
 
+app.get('/api/health', (req, res) => res.json({ aiConfigured: Boolean(process.env.GEMINI_API_KEY) }))
+
 app.post('/api/step', route('step', async (b) => {
   if (!hasSpeech(b)) return { transcript: '', clear: true, vagueItems: [], question: null, empty: true }
   const out = await checkStep(b)

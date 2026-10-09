@@ -26,34 +26,75 @@ export const currentStep = (s) => {
   return last && !last.closed ? last : null
 }
 
-let nextId = 1
-export const newStepId = () => `step-${nextId++}`
+export const newStepId = () => `step-${globalThis.crypto.randomUUID()}`
 
-const updateStep = (s, id, fn) => ({ ...s, steps: s.steps.map((st) => (st.id === id ? fn(st) : st)) })
-const dropUnknownsFor = (list, stepId) => list.filter((u) => u.stepId !== stepId)
+const updateStep = (s, id, fn) => ({
+  ...s,
+  steps: s.steps.map((st) => (st.id === id ? fn(st) : st)),
+})
+const dropUnknownsFor = (list, stepId) =>
+  list.filter((u) => u.stepId !== stepId)
 const vagueToUnknown = (stepId, items, reason) =>
   items.map((v) => ({ stepId, item: v.item, herWords: v.herWords, reason }))
 
 export function sessionReducer(s, a) {
   switch (a.type) {
     case 'START':
-      return { ...initialSession, screen: 'session', dish: a.dish.trim(), cook: a.cook.trim() }
+      return {
+        ...initialSession,
+        screen: 'session',
+        dish: a.dish.trim(),
+        cook: a.cook.trim(),
+        demo: Boolean(a.demo),
+      }
+
+    case 'RESUME':
+      return {
+        ...initialSession,
+        ...a.session,
+        screen: 'session',
+        cardStatus: 'idle',
+      }
+
+    case 'INPUT_DRAFT':
+      return { ...s, inputDraft: a.text }
 
     case 'STEP_SUBMITTED':
       return {
         ...s,
         hint: null,
         toast: null,
-        steps: [...s.steps, { id: a.id, transcript: a.text ?? '', status: 'thinking', question: null, counted: false, answer: null, vagueItems: [], closed: false }],
+        steps: [
+          ...s.steps,
+          {
+            id: a.id,
+            transcript: a.text ?? '',
+            status: 'thinking',
+            question: null,
+            counted: false,
+            answer: null,
+            vagueItems: [],
+            closed: false,
+          },
+        ],
       }
 
     case 'STEP_EMPTY':
-      return { ...s, steps: s.steps.filter((st) => st.id !== a.id), hint: "Didn't catch that — tap the mic and try again" }
+      return {
+        ...s,
+        steps: s.steps.filter((st) => st.id !== a.id),
+        hint: "Didn't catch that — tap the mic and try again",
+      }
 
     case 'RECHECK_SUBMITTED':
       // Re-evaluate edited text. Any earlier Still Unknown entries for this step are replaced.
       return {
-        ...updateStep(s, a.id, (st) => ({ ...st, transcript: a.text, status: 'thinking' })),
+        ...updateStep(s, a.id, (st) => ({
+          ...st,
+          transcript: a.text,
+          status: 'thinking',
+          answer: null,
+        })),
         stillUnknown: dropUnknownsFor(s.stillUnknown, a.id),
         toast: null,
       }
@@ -63,35 +104,91 @@ export function sessionReducer(s, a) {
       const step = s.steps.find((st) => st.id === a.id)
       if (!step) return s
       if (clear || !vagueItems.length) {
-        return updateStep(s, a.id, (st) => ({ ...st, transcript, status: 'clear', question: null, vagueItems: [] }))
+        return updateStep(s, a.id, (st) => ({
+          ...st,
+          transcript,
+          status: 'clear',
+          question: null,
+          vagueItems: [],
+        }))
       }
       // A re-check that asks again replaces the earlier question — it doesn't count twice.
       const alreadyCounted = step.counted
       if (question && (alreadyCounted || canAsk(s))) {
         return {
-          ...updateStep(s, a.id, (st) => ({ ...st, transcript, status: 'asking', question, vagueItems, counted: true })),
-          questionsAsked: alreadyCounted ? s.questionsAsked : s.questionsAsked + 1,
+          ...updateStep(s, a.id, (st) => ({
+            ...st,
+            transcript,
+            status: 'asking',
+            question,
+            vagueItems,
+            counted: true,
+          })),
+          questionsAsked: alreadyCounted
+            ? s.questionsAsked
+            : s.questionsAsked + 1,
         }
       }
       // Budget used up (or no usable question): stay quiet, send vague items to Still Unknown.
       return {
-        ...updateStep(s, a.id, (st) => ({ ...st, transcript, status: 'clear', question: null, vagueItems })),
-        stillUnknown: [...s.stillUnknown, ...vagueToUnknown(a.id, vagueItems, question ? 'budget' : 'still_vague')],
+        ...updateStep(s, a.id, (st) => ({
+          ...st,
+          transcript,
+          status: 'clear',
+          question: null,
+          vagueItems,
+        })),
+        stillUnknown: [
+          ...s.stillUnknown,
+          ...vagueToUnknown(
+            a.id,
+            vagueItems,
+            question ? 'budget' : 'still_vague',
+          ),
+        ],
       }
     }
 
     case 'STEP_OFFLINE':
+      if (!a.text)
+        return {
+          ...s,
+          steps: s.steps.filter((st) => st.id !== a.id),
+          hint: 'The recording could not be transcribed. Please try again or type this step.',
+          toast:
+            'Audio wasn’t transcribed — please record again or type the words.',
+        }
       return {
-        ...updateStep(s, a.id, (st) => ({ ...st, transcript: a.text ?? st.transcript, status: 'offline' })),
-        stillUnknown: [...dropUnknownsFor(s.stillUnknown, a.id), { stepId: a.id, item: 'Step not checked', herWords: a.text ?? '', reason: 'offline' }],
-        toast: 'Pinch lost connection — step saved to Still Unknown',
+        ...updateStep(s, a.id, (st) => ({
+          ...st,
+          transcript: a.text ?? st.transcript,
+          status: 'offline',
+        })),
+        stillUnknown: [
+          ...dropUnknownsFor(s.stillUnknown, a.id),
+          {
+            stepId: a.id,
+            item: 'Step not checked',
+            herWords: a.text ?? '',
+            reason: 'offline',
+          },
+        ],
+        toast: a.notesMode
+          ? 'Original words saved. This step hasn’t been checked by AI.'
+          : 'Pinch lost connection — step saved to Still Unknown',
       }
 
     case 'ANSWER_SUBMITTED':
-      return { ...updateStep(s, a.id, (st) => ({ ...st, status: 'answering' })), toast: null }
+      return {
+        ...updateStep(s, a.id, (st) => ({ ...st, status: 'answering' })),
+        toast: null,
+      }
 
     case 'ANSWER_EMPTY':
-      return { ...updateStep(s, a.id, (st) => ({ ...st, status: 'asking' })), hint: "Didn't catch that — tap the mic and try again" }
+      return {
+        ...updateStep(s, a.id, (st) => ({ ...st, status: 'asking' })),
+        hint: "Didn't catch that — tap the mic and try again",
+      }
 
     case 'ANSWER_RESULT': {
       const { transcript, outcome, value } = a.result
@@ -99,13 +196,20 @@ export function sessionReducer(s, a) {
       if (!step) return s
       const answer = { transcript, outcome, value }
       if (outcome === 'answered') {
-        return updateStep(s, a.id, (st) => ({ ...st, status: 'answered', answer }))
+        return updateStep(s, a.id, (st) => ({
+          ...st,
+          status: 'answered',
+          answer,
+        }))
       }
       // "I don't know" or still vague: to Still Unknown, no follow-up to a follow-up.
       const reason = outcome === 'dont_know' ? 'dont_know' : 'still_vague'
       return {
         ...updateStep(s, a.id, (st) => ({ ...st, status: 'unknown', answer })),
-        stillUnknown: [...s.stillUnknown, ...vagueToUnknown(a.id, step.vagueItems, reason)],
+        stillUnknown: [
+          ...s.stillUnknown,
+          ...vagueToUnknown(a.id, step.vagueItems, reason),
+        ],
       }
     }
 
@@ -113,23 +217,61 @@ export function sessionReducer(s, a) {
       const step = s.steps.find((st) => st.id === a.id)
       if (!step) return s
       return {
-        ...updateStep(s, a.id, (st) => ({ ...st, status: 'unknown' })),
-        stillUnknown: [...s.stillUnknown, ...vagueToUnknown(a.id, step.vagueItems, 'offline')],
+        ...updateStep(s, a.id, (st) => ({
+          ...st,
+          status: 'unknown',
+          answer: a.text
+            ? { transcript: a.text, outcome: 'unverified', value: null }
+            : st.answer,
+        })),
+        stillUnknown: [
+          ...s.stillUnknown,
+          ...vagueToUnknown(a.id, step.vagueItems, 'offline'),
+        ],
         toast: 'Pinch lost connection — step saved to Still Unknown',
       }
     }
 
     case 'NEXT_STEP':
-      return { ...s, steps: s.steps.map((st) => ({ ...st, closed: true })), hint: null, toast: null }
+      return {
+        ...s,
+        stillUnknown: [
+          ...s.stillUnknown,
+          ...s.steps
+            .filter((st) => !st.closed && st.status === 'asking')
+            .flatMap((st) => vagueToUnknown(st.id, st.vagueItems, 'skipped')),
+        ],
+        steps: s.steps.map((st) => ({ ...st, closed: true })),
+        hint: null,
+        toast: null,
+      }
 
     case 'CARD_BUILDING':
-      return { ...s, steps: s.steps.map((st) => ({ ...st, closed: true })), cardStatus: 'building', toast: null }
+      return {
+        ...s,
+        steps: s.steps.map((st) => ({ ...st, closed: true })),
+        cardStatus: 'building',
+        toast: null,
+      }
 
     case 'CARD_READY':
-      return { ...s, screen: 'card', card: a.card, savedId: a.savedId ?? null, cardStatus: 'idle' }
+      return {
+        ...s,
+        screen: 'card',
+        card: a.card,
+        savedId: a.savedId ?? null,
+        cardStatus: 'idle',
+      }
 
     case 'OPEN_SAVED':
-      return { ...initialSession, screen: 'card', card: a.card, savedId: a.savedId, fromLibrary: true }
+      return {
+        ...initialSession,
+        screen: 'card',
+        card: a.card,
+        savedId: a.savedId,
+        fromLibrary: true,
+        sample: Boolean(a.sample),
+      }
 
     case 'CARD_ERROR':
       return { ...s, cardStatus: 'error' }
@@ -139,6 +281,11 @@ export function sessionReducer(s, a) {
 
     case 'RESET':
       return initialSession
+
+    case 'DISCARD_EMPTY':
+      return s.steps.some((st) => st.transcript) || s.inputDraft?.trim()
+        ? s
+        : { ...initialSession, discardDraft: true }
 
     default:
       return s

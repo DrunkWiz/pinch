@@ -10,7 +10,8 @@
   }
 
   .no-print,
-  .toast {
+  .toast,
+  .skip-link {
     display: none !important;
   }
 
@@ -46,5 +47,19 @@
   .margin {
     border-left: 1px dashed var(--margin-line);
     padding-left: 12px;
+  }
+  .line.is-done > span:last-child {
+    opacity: 1;
+    text-decoration: none;
+  }
+  .card {
+    border: none;
+    padding: 0;
+  }
+  .card .row {
+    grid-template-columns: 60fr 40fr;
+  }
+  .card-title {
+    font-size: 30px;
   }
 }
