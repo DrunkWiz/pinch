@@ -49,7 +49,7 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
   Learner check: Finish a session and look at the card. Is every amount something she actually said, are her reasons in the margin, and is Still Unknown honest? Then press Print and check the preview shows only the card.
   Commit: `Add heirloom card with never-guess check and print`
 
-- [ ] **5. Ready to film: states polished, README, and tunnel run-through**
+- [x] **5. Ready to film: states polished, README, and tunnel run-through**
   Becomes usable: The whole journey works on the iPhone through the tunnel, with every PRD state handled (empty start, first-step hint, nothing heard, mic blocked, lost connection, budget used, card retry), and a README tells anyone how to run it.
   Why now: Everything core is in, so this pass closes the gaps between slices and makes the filming setup repeatable.
   PRD ref: `prd.md > States and Boundaries`, `prd.md > The Core Journey`
@@ -61,7 +61,7 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
 
 ## Hands-on Checkpoints
 
-- [ ] Early usable behavior explored — after slice 2: voice on your iPhone through the tunnel, while there's still time to change course on the audio path
+- [x] Early usable behavior explored — replaced: the learner skipped the mid-build pause (fast, one-shot). Early feedback came through the UI review instead ("looks boring/ugly" → notebook restyle).
 - [ ] Final kick-the-tires exploration and feedback completed
 
 ## Final Review
@@ -91,3 +91,4 @@ Activity mode:
 - Gemini model fallback chain (`gemini-3.5-flash` → `gemini-3.8-flash` → `gemini-3.1-flash-lite`), with a 15s cap per attempt — on first real use, `gemini-flash-latest` returned 503 "high demand". Busy or slow models now fall through to the next. The phone's step/answer timeout went from 20s to 30s to leave room for one fallback. The default model is no longer `gemini-flash-latest`.
 - Card Still Unknown de-duplication and capitalised ingredient names — real Gemini output repeated an item using her "I don't know" answer as the phrase. The card prompt now gets the existing unknowns, and the never-guess check skips duplicates (with a test).
 - Slice 2's iPhone check is deferred to the final review (cloudflared not installed yet). Mechanically verified with Windows TTS WAV clips: the step transcribed verbatim, and the answers classified correctly as answered / don't know.
+- Phone simulated in desktop Chrome instead of iPhone + Cloudflare tunnel — the learner chose to test and film in a mobile-sized browser view on the laptop. Slice 5 verified with `npm start` serving the built app and API on one port, plus the 375px walkthrough. **Not verified on a real iPhone:** WAV recording in iPhone Chrome and the spoken question after the Start-tap unlock. Don't claim iPhone testing in the submission. The README keeps the tunnel steps for anyone who wants to try a real phone.

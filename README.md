@@ -32,9 +32,9 @@ cp .env.example .env      # then put your key in .env
 npm run dev               # app on http://localhost:5173, API on :3000
 ```
 
-Desktop Chrome lets `localhost` use the mic, so the whole flow works on a laptop. Use **Type instead** to try it without speaking.
+Desktop Chrome lets `localhost` use the mic, so the whole flow works on a laptop. To see it as a phone, open DevTools (F12) and turn on the device toolbar (Ctrl+Shift+M), then pick a phone size. Use **Type instead** to try it without speaking.
 
-### On a phone
+### On a real phone (optional, not yet tested on iPhone)
 
 A phone browser only allows the mic on an `https://` page. Use a free Cloudflare quick tunnel (`winget install Cloudflare.cloudflared` on Windows, `brew install cloudflared` on macOS):
 
