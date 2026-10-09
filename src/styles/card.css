@@ -208,3 +208,31 @@
     display: none;
   }
 }
+
+.confirm {
+  width: 100%;
+  margin-top: 8px;
+  padding: 14px 16px;
+  border: 2px dashed var(--accent);
+  border-radius: 12px;
+  background: var(--paper);
+  font-family: var(--font-note);
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.confirm p {
+  margin: 0 0 12px;
+  line-height: 1.35;
+}
+
+.confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.confirm-actions .btn {
+  font-size: 16px;
+  padding: 0 10px;
+}
