@@ -92,6 +92,15 @@ Source: `scope.md > What "Working" Looks Like`.
 ### Printing
 - [ ] The Print button opens the browser's print dialog. The printout shows only the card (no buttons) and keeps the notebook styling.
 
+### Your Recipes (local library)
+*Added during the build at the learner's request (it was deferred in scope).* Source: `scope.md > The POC Boundary`.
+- [ ] A finished card is saved automatically to **Your recipes** in this browser. The card screen shows "✓ Saved to Your recipes on this device".
+- [ ] The Start screen lists saved cards under **Your recipes**, newest first, with the date and how many items are still unknown.
+- [ ] Tapping a saved card reopens it, ready to print.
+- [ ] Delete takes two taps (× → "Delete?") so a card isn't lost by accident.
+- [ ] Empty library: "Finished cards are saved here on this device."
+- [ ] If the browser won't store it (private mode, blocked storage), the card screen says "Not saved — print to keep it", and leaving asks first.
+
 ### Typed Fallback
 Source: `scope.md > The POC Boundary`.
 - [ ] If the mic isn't available or isn't working, the grandchild can type the step (and the answer) instead. Everything else in the flow works the same: Pinch's check, the spoken question, the card.
@@ -104,7 +113,7 @@ Source: `scope.md > The POC Boundary`.
 - **Nothing heard:** if the mic stops and the transcript is empty, nothing is sent. A hint asks them to try again.
 - **Pinch can't be reached (network/model error, timeout):** the session never blocks. A brief, non-intrusive message appears at the top ("Pinch lost connection — step saved to Still Unknown"). The raw transcript for that step is kept, its unchecked items go to Still Unknown, and Next step is available immediately. It's treated the same as her saying "I don't know".
 - **Question budget used up (3 asked):** no more questions. Steps get a tick, and vague items go to Still Unknown quietly.
-- **Persistence:** nothing is saved. Closing or refreshing the tab loses the session. Print is the only way to keep a card.
+- **Persistence:** a session in progress is in memory only, so refreshing loses it. **Finished cards** are saved in this browser on this device. Clearing browser data, or using another browser or device, means they're not there. Print is the durable backup.
 
 ## Product Decisions
 - **Three linear screens (Start → Session → Card).** Simple enough to use with batter on your hands.
@@ -118,13 +127,13 @@ Source: `scope.md > The POC Boundary`.
 - **Never block on a lost connection.** Cooking doesn't pause for weak Wi-Fi. An unreachable Pinch is treated like "I don't know".
 - **Question budget of 3 per recipe (down from scope's "about five").** It keeps the session from feeling like an interrogation, and it still matches the three questions planned for the video.
 - **No follow-ups to follow-ups.** One question per step, full stop.
-- **Saved-recipes notebook deferred** (decided in scope).
+- **Local recipe library added during the build** (reversing the scope deferral). The learner expected "keep this card" to save it, and a library makes the app useful beyond one session. Kept to the device (`localStorage`), with no accounts.
 
 ## What We're Building
 Start screen; session screen with mic, transcript box, per-step check, a single spoken question in big text, tick / Next step / Finish; "I don't know" handling; question budget; the heirloom card with structured body, margin voice and reasons, and the Still Unknown box; print; typed fallback; the states above.
 
 ## Deferred From the POC
-- **Saved-recipes notebook:** keeping past cards on the device. Not needed to prove the kernel.
+- **Syncing or sharing saved recipes** across devices or family members.
 - **Dark mode:** light mode only for the build.
 - **Editing a finished card, or going back a step:** start a new session instead.
 - **An "I don't know" button:** spoken only for now.

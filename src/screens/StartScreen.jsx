@@ -1,9 +1,12 @@
 import { useState } from 'react'
 import { unlockSpeech } from '../lib/speak.js'
+import { deleteRecipe, loadRecipes } from '../lib/library.js'
+import RecipeLibrary from '../components/RecipeLibrary.jsx'
 
 export default function StartScreen({ dispatch }) {
   const [dish, setDish] = useState('')
   const [cook, setCook] = useState('')
+  const [recipes, setRecipes] = useState(loadRecipes)
   const ready = dish.trim() && cook.trim()
 
   function start(e) {
@@ -36,6 +39,14 @@ export default function StartScreen({ dispatch }) {
       <button className="btn btn-primary btn-big" type="submit" disabled={!ready}>
         Start cooking
       </button>
+      <RecipeLibrary
+        recipes={recipes}
+        onOpen={(r) => dispatch({ type: 'OPEN_SAVED', card: r.card, savedId: r.id })}
+        onDelete={(id) => {
+          deleteRecipe(id)
+          setRecipes(loadRecipes())
+        }}
+      />
       <p className="start-note">Hold the phone, let them cook — Pinch does the asking.</p>
     </form>
   )

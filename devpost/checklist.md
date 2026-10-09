@@ -59,6 +59,16 @@ Build mode: fast — learner asked to skip the mid-build pause; the iPhone check
   Learner check: Follow the README yourself to start the tunnel, then do a full pancake session on your iPhone from Start to Print, as if filming.
   Commit: `Polish states and add README for filming`
 
+- [x] **6. Your recipes: finished cards saved on this device**
+  Becomes usable: Every finished card saves automatically. The Start screen lists them to reopen, print or delete.
+  Why now: Added in the final review. The learner expected "keep this card" to save it and asked for the library that was deferred in scope.
+  PRD ref: `prd.md > Your Recipes (local library)`, `prd.md > States and Boundaries` (persistence)
+  Spec ref: `spec.md > Recipe Library`, `spec.md > Data Model`
+  Build: `library.js` with wrapped `localStorage`, auto-save on Finish, `RecipeLibrary` on the Start screen, `OPEN_SAVED` reducer action, a saved/unsaved note on the card screen, and two-tap delete.
+  Verify (mechanical): `npm test` passes the library tests (save newest-first, delete, corrupt storage, blocked storage). In the browser: make two cards, both listed, reopen one, delete one, and it's still correct after a reload.
+  Learner check: Finish a recipe, go back to Start, see it under Your recipes, reopen it, then delete it.
+  Commit: `Add local recipe library`
+
 ## Hands-on Checkpoints
 
 - [x] Early usable behavior explored — replaced: the learner skipped the mid-build pause (fast, one-shot). Early feedback came through the UI review instead ("looks boring/ugly" → notebook restyle).
@@ -93,3 +103,4 @@ Activity mode:
 - Slice 2's iPhone check is deferred to the final review (cloudflared not installed yet). Mechanically verified with Windows TTS WAV clips: the step transcribed verbatim, and the answers classified correctly as answered / don't know.
 - Phone simulated in desktop Chrome instead of iPhone + Cloudflare tunnel — the learner chose to test and film in a mobile-sized browser view on the laptop. Slice 5 verified with `npm start` serving the built app and API on one port, plus the 375px walkthrough. **Not verified on a real iPhone:** WAV recording in iPhone Chrome and the spoken question after the Start-tap unlock. Don't claim iPhone testing in the submission. The README keeps the tunnel steps for anyone who wants to try a real phone.
 - "Start a new recipe" confirms on the page instead of with `window.confirm` — found in the learner's final review: the browser dialog was silently blocked in an embedded browser, so the button did nothing.
+- Local recipe library added (slice 6) — in the final review, the learner pressed "Keep this card" expecting it to save, and asked for the library deferred in scope. Scope, PRD and spec updated. The card buttons now read "Your recipes · start new" (saved) or confirm before leaving (not saved).

@@ -47,10 +47,12 @@ The "oh, that's cool" beat: she says "add a splash of milk, not too much". Pinch
 - The final card: her words verbatim beside what she clarified, the reasons she gave ("don't overmix, or they go tough"), and a "still unknown" list. Styled like a family-notebook page.
 - Print: a clean printable card is the export.
 - Typed-input fallback with the same flow, for when the mic or browser misbehaves, and for testing without cooking.
-- No accounts, no database. Session state lives in memory.
+- **Your recipes:** finished cards save automatically in this browser (`localStorage`), listed on the Start screen to reopen, print or delete. *(Moved from Later during the build, at the learner's request.)*
+- No accounts, no server database. A session in progress lives in memory.
 
 ## Later
-- **Saved-recipes notebook:** a page of past cards saved on the device. Deferred because it doesn't help prove the kernel, and the demo needs one great dish, not a shelf.
+- ~~Saved-recipes notebook~~ — moved into the POC during the build (see The POC Boundary).
+- Syncing recipes across devices, or sharing them with family.
 - Heirloom model: a one-off paid printed family cookbook, with relatives abroad added to the family copy.
 - One health feature that fits: "adapt Betty's recipe for Dad's diabetes, and show exactly what changed."
 

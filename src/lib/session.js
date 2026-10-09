@@ -11,6 +11,7 @@ export const initialSession = {
   steps: [],
   stillUnknown: [],
   card: null,
+  savedId: null, // set when the card is in Your recipes
   cardStatus: 'idle', // 'idle' | 'building' | 'error'
   toast: null,
   hint: null,
@@ -124,7 +125,10 @@ export function sessionReducer(s, a) {
       return { ...s, steps: s.steps.map((st) => ({ ...st, closed: true })), cardStatus: 'building', toast: null }
 
     case 'CARD_READY':
-      return { ...s, screen: 'card', card: a.card, cardStatus: 'idle' }
+      return { ...s, screen: 'card', card: a.card, savedId: a.savedId ?? null, cardStatus: 'idle' }
+
+    case 'OPEN_SAVED':
+      return { ...initialSession, screen: 'card', card: a.card, savedId: a.savedId }
 
     case 'CARD_ERROR':
       return { ...s, cardStatus: 'error' }

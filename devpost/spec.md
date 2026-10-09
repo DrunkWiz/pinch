@@ -120,6 +120,10 @@ PRD ref: `prd.md > Pinch's Check (the kernel)` (read aloud).
 The same Session screen with a text box and Send button instead of the mic, used when the recorder errors, or switched on with a small "Type instead" link. It sends text to the same endpoints.
 PRD ref: `prd.md > Typed Fallback`.
 
+### Recipe Library
+`src/lib/library.js` (`loadRecipes`, `saveRecipe`, `deleteRecipe`, tested in `library.test.js`) and `src/components/RecipeLibrary.jsx` on the Start screen. Cards are stored as JSON in `localStorage` under `pinch.recipes.v1`, as `[{ id, savedAt, card }]`, newest first. Saved when Finish returns a card; reopened via the reducer's `OPEN_SAVED`. Every storage call is wrapped, so blocked storage means "not saved", never a crash. *(Added in build.)*
+PRD ref: `prd.md > Your Recipes (local library)`.
+
 ### Heirloom Card
 `src/screens/CardScreen.jsx` and `src/components/HeirloomCard.jsx`. Renders the card JSON: title, Ingredients, Method, margin notes beside their lines, and the Still Unknown footer. Includes a Print button.
 PRD ref: `prd.md > Finishing and the Heirloom Card`, `prd.md > Printing`.
@@ -144,7 +148,7 @@ PRD ref: `prd.md > Finishing and the Heirloom Card` (never-guess check).
 
 ## Data Model
 
-All session data lives **only in React state on the phone**. Closing or refreshing the tab loses it, as the PRD intends. The server stores nothing.
+A session in progress lives **only in React state**, so refreshing loses it. **Finished cards** are also saved to `localStorage` (`pinch.recipes.v1`) on that device (see Recipe Library). The server stores nothing.
 
 ```js
 session = {
@@ -252,7 +256,7 @@ pinch/  (repo root)
 
 - **Transcription after recording** instead of a live word-by-word transcript. Browser speech recognition isn't available in Chrome on iPhone. The fuller version would need a streaming speech service, such as a WebSocket to a real-time transcription API.
 - **Laptop + tunnel** instead of hosting. No account or deploy step. The fuller version would deploy to a host like Vercel, with the server routes as serverless functions.
-- **No database.** The session lives in phone memory and print is the export. The fuller version (the deferred notebook) would save cards in the browser's `localStorage` first, and a real database later.
+- **`localStorage` instead of a database.** Finished cards stay on one device. The fuller version would sync to a server with accounts so family members share one cookbook.
 - **Plain JavaScript** instead of TypeScript, for less setup in a short build.
 - **Tests only for the two correctness-critical pieces** (the never-guess check and the budget). Everything else is checked by trying it on screen.
 

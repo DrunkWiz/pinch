@@ -236,3 +236,19 @@
   font-size: 16px;
   padding: 0 10px;
 }
+
+.saved-note {
+  margin: 0 0 4px;
+  font-family: var(--font-note);
+  font-size: 19px;
+  color: var(--ok);
+  text-align: center;
+}
+
+.saved-note.unsaved {
+  color: var(--accent-dark);
+}
+
+.card-actions {
+  gap: 10px;
+}

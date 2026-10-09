@@ -3,6 +3,7 @@ import { MAX_QUESTIONS, currentStep, newStepId } from '../lib/session.js'
 import { createRecorder, micSupported } from '../lib/recorder.js'
 import { postAnswer, postCard, postStep } from '../lib/api.js'
 import { speak, stopSpeaking } from '../lib/speak.js'
+import { saveRecipe } from '../lib/library.js'
 import QuestionBanner from '../components/QuestionBanner.jsx'
 import TranscriptBox from '../components/TranscriptBox.jsx'
 import MicButton from '../components/MicButton.jsx'
@@ -113,7 +114,7 @@ export default function SessionScreen({ session, dispatch }) {
       stillUnknown: session.stillUnknown,
     })
     if (res.offline) dispatch({ type: 'CARD_ERROR' })
-    else dispatch({ type: 'CARD_READY', card: res })
+    else dispatch({ type: 'CARD_READY', card: res, savedId: saveRecipe(res)?.id ?? null })
   }
 
   const micCaption = recording
