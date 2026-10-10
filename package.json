@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "license": "MIT",
   "description": "Pinch interviews your grandparent while they cook, so 'a pinch' gets pinned down while their hands are still in the pot.",
   "scripts": {
     "dev": "concurrently -n web,api -c magenta,cyan \"vite\" \"node --watch-path=server --env-file-if-exists=.env server/index.js\"",
