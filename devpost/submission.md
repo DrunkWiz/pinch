@@ -8,7 +8,7 @@ Everything for the Devpost form, in the order the form asks for it. This is a **
 
 **Pinch**
 
-**Tagline:** Pinch interviews your grandparent while they cook, so "a pinch" and "a splash" get pinned down while their hands are still in the pot.
+**Tagline:** A pinch of this. A lifetime of that. Pinch interviews your grandparent while they cook, so "a pinch" and "a splash" get pinned down while their hands are still in the pot.
 
 ---
 
@@ -24,34 +24,41 @@ Lots of apps already try to save these recipes, and they all work the same way: 
 
 Pinch asks **during** the cooking, not afterwards.
 
-The grandchild holds the phone, and the grandparent just cooks and talks. After each step, Pinch either stays quiet because the step is clear, or asks **one** short follow-up question, out loud and in big text: *"About how much milk should we add?"* The cook answers on the spot, while her hands are still in the bowl.
+The grandchild holds the phone, and the grandparent just cooks and talks. After each step, Pinch either stays quiet because the step is clear, or asks **one** short follow-up question in big text, optionally read aloud: *"About how much milk is a splash?"* The cook answers on the spot, while her hands are still in the bowl.
 
 Pinch follows one rule: **it never guesses an amount.** The AI decides *what to ask*, but it never decides *what the answer is*. Every amount on the final card has to come from the cook's own words. Anything that wasn't pinned down goes on an honest **Still unknown** list to ask about next time. This rule isn't left to the AI. Plain code on the server checks every amount, number and quote on the card against what the cook actually said, and removes anything it can't trace.
 
 ### Key features
 
-- **Step-by-step voice capture.** Tap the mic, the cook describes the step, and Pinch writes down her exact words.
+**In the kitchen**
+- **Step-by-step capture by voice or typing.** Pinch writes down the cook's exact words, with a recording timer and the option to edit and re-check a transcript.
 - **One question at a time.** Pinch asks at most one follow-up per step and three per session, so it never feels like an interrogation while someone is flipping pancakes.
-- **Spoken questions in big text.** You can hear and read them from across the kitchen.
+- **Big, readable questions,** with an optional "read questions aloud" toggle.
 - **Catches mishearings.** If the transcript says "a flash of milk", Pinch asks *"Did you mean a splash of milk?"* instead of silently "fixing" it.
-- **"I don't know" is respected.** It goes straight to Still unknown, with no arguing and no follow-up to a follow-up.
-- **The heirloom recipe card** looks like a page from a family notebook:
+- **"I don't know" and "Skip this question" are respected.** The item goes straight to Still unknown, with no arguing and no follow-up to a follow-up.
+- **Sessions are never lost.** Drafts save automatically on the device, including unsent typed words, so you can leave, refresh, and resume from the home screen.
+- **Keeps working when the AI doesn't.** If one Gemini model is busy, Pinch tries another. If the AI isn't available at all, Pinch switches to *notes mode* and saves the cook's exact words without guessing any ingredients.
+
+**The recipe card**
+- **The heirloom card** keeps three things together:
   - a cookable list of ingredients and method
-  - her verbatim words and reasons ("don't overmix or they go tough") in blue handwriting in the margin
-  - the Still unknown box at the bottom
+  - her verbatim words and reasons ("don't overmix or they go tough")
+  - an honest **Still unknown** box at the bottom
 - **Never-guess check:** server-side code traces every amount on the card back to the cook's words. An invented amount becomes "amount unknown".
-- **Print** gives a clean printable card.
-- **Your recipes:** finished cards are saved on the device to reopen, print again or delete.
-- **Typed fallback** for when the mic isn't available, and it's useful for testing.
-- **Keeps working when the AI is busy.** If one Gemini model is overloaded, Pinch tries another. If Pinch can't be reached at all, the step is saved to Still unknown and the session carries on.
+- **Cook this recipe:** a temporary checklist for cooking along.
+- **Print, or download as plain text,** for a copy that lasts.
+
+**The recipe book**
+- **Your recipe book:** every finished card saves on the device. Search by name, sort newest-first or A–Z, reopen, and remove (with confirmation).
+- **See an example / guided demo:** a clearly labelled sample pancake recipe to try Pinch with no microphone or setup. Sample words are never sent to the AI and never saved into your real recipe book.
 
 ### Technologies used
 
-- **Frontend:** React 19 + Vite, plain JavaScript and CSS (notebook design: Caveat, Patrick Hand, Lora and Inter fonts from Google Fonts)
-- **Backend:** Node.js + Express. It keeps the API key on the server, so it never reaches the phone.
+- **Frontend:** React 19 + Vite, plain JavaScript and CSS (a custom recipe-book design system)
+- **Backend:** Node.js + Express. It keeps the API key on the server, so it never reaches the browser.
 - **AI:** Google Gemini API via the `@google/genai` SDK, with structured JSON output. One call per step transcribes the audio *and* decides "clear, or the one best question". A fallback chain covers busy models (`gemini-3.5-flash` → `gemini-3.8-flash` → `gemini-3.1-flash-lite`).
-- **Browser APIs:** Web Audio (recording 16 kHz WAV in the browser), Web Speech synthesis (reading questions aloud), localStorage (saved recipes)
-- **Testing:** Vitest. There are 22 unit tests on the parts where correctness matters: the never-guess check, the question budget and the recipe library.
+- **Browser APIs:** Web Audio (recording 16 kHz WAV in the browser), Web Speech synthesis (reading questions aloud), localStorage (recipe book and session drafts)
+- **Testing:** Vitest. There are 31 unit tests covering the never-guess check, the question budget, recipe storage, draft recovery, offline answers and demo isolation.
 - **Process:** built with Claude Code using a plan-first workflow. A scope, product requirements doc and technical spec were written and approved before any code (all in the repo's `devpost/` folder).
 
 ### Target users
@@ -68,8 +75,8 @@ My goal going in was to get better at planning before building. Normally I promp
 
 The planning caught real problems early. Researching how voice would work showed that browser speech recognition doesn't work in Chrome on iPhone, so the architecture changed to recording audio and having Gemini transcribe it. That happened before a line of code existed, not in the kitchen. Other things only showed up when the app met the real world:
 - Gemini's free tier was overloaded on the first real request, which led to the model fallback chain.
-- The first UI looked plain, which led to the notebook redesign.
-- I realised I wanted a recipe library, which I had cut from scope earlier.
+- The first UI looked plain, which led to two redesigns.
+- I realised I wanted a recipe book, which I had cut from scope earlier.
 
 The plan didn't stop those changes, but it gave every change a place to go and a record of why.
 
@@ -77,11 +84,13 @@ The plan didn't stop those changes, but it gave every change a place to go and a
 
 ## Project files (upload these)
 
-From the repo's `screenshots/` folder, all captured from a real session with real Gemini replies at phone size:
+From the repo's `screenshots/` folder. Every one comes from a **live session with real Gemini replies**, not the demo, captured at phone size:
 
-1. `01-start-and-your-recipes.jpg`: the start screen, with a saved recipe in Your recipes
-2. `02-pinch-asks.jpg`: Pinch asking "About how much milk should we add?" after the cook said "a splash of milk, not too much"
-3. `03-recipe-card.jpg`: the finished heirloom card: her words and reasons in the margin, and "Flour (amount unknown)" in Still unknown because no amount was ever confirmed
+1. `01-home.jpg`: the recipe-book home: "A pinch of this. A lifetime of that."
+2. `02-pinch-asks.jpg`: the cook said "a splash of milk, not too much", and Pinch asks "About how much milk is a splash?"
+3. `03-recipe-card.jpg`: the finished card: flour and milk amounts "clarified by the cook", her answer quoted, and "Butter (amount unknown)"
+4. `04-still-unknown.jpg`: the method with her reason ("don't overmix or they go tough") and the Still unknown box: "a knob of butter", because she said "I don't know, I just do it by feel"
+5. `05-recipe-book.jpg`: the saved recipe in Your recipe book, with search and sort
 
 Plus your demo video (script below).
 
@@ -105,21 +114,22 @@ Solo: **[your name]**, in every role: product, design, development and testing (
 - **Don't say "tested on iPhone".** It was tested in a mobile-sized browser view on a laptop. Real-phone use needs the HTTPS tunnel in the README, and that hasn't been tried.
 - **Don't quote transcription accuracy numbers.** They weren't measured.
 - **Only claim English.** No other languages were tested.
-- **Don't claim cloud sync or sharing.** Recipes save on one device only.
+- **Don't claim cloud sync, accounts or sharing.** Recipes save on one device only.
+- **Don't present the guided demo as a real session.** It's labelled sample content. The screenshots above are from a real one.
 
 ---
 
 ## Demo video script (1–3 minutes)
 
-**Setup:** run `npm run dev`, then open http://localhost:5173 in Chrome. Press F12, then Ctrl+Shift+M, and pick a phone size such as iPhone 14. Record the screen with **Win + Alt + R** (Xbox Game Bar), or with OBS if you want your face or voice too. Use your real mic, and if a real grandparent can cook on camera, that's the strongest version. Gemini can be slow, so cut out long "Pinch is listening back…" waits when editing.
+**Setup:** run `npm run dev`, then open http://localhost:5173 in Chrome. Press F12, then Ctrl+Shift+M, and pick a phone size such as iPhone 14. Record the screen with **Win + Alt + R** (Xbox Game Bar), or with OBS if you want your face or voice too. Turn **"Read questions aloud" on** so the video has Pinch's voice. If a real grandparent can cook on camera, that's the strongest version. Gemini can be slow, so cut out long "Pinch is listening back…" waits when editing.
 
 | Time | Show | Say (roughly) |
 |---|---|---|
-| 0:00–0:15 | Start screen | "My grandmother never measures anything. It's 'a splash of this', 'cook it till it's ready'. Apps that record her and extract a recipe afterwards keep those vague parts vague, because by then she's left the kitchen." |
-| 0:15–0:25 | Type the dish and cook, tap **Start cooking** | "Pinch asks while she's still cooking." |
-| 0:25–0:45 | Mic: say a clear step, like "Crack two eggs into the bowl" → tick | "When a step is clear, Pinch stays quiet." |
-| 0:45–1:15 | Mic: "Add a splash of milk, not too much" → the big question → answer "About two tablespoons" | "When something's vague, it asks one question, out loud. Her answer is what goes on the card." |
-| 1:15–1:30 | Mic: a step with a vague cue → answer "I don't know, I do it by feel" | "And 'I don't know' is fine. No arguing. It goes on a Still unknown list." |
-| 1:30–2:05 | Tap **Finish** → the card writes itself in | "Her words and reasons in the margin. Every amount came from her. Pinch never invents an amount: code on the server checks every number against what she actually said. And here's what we still need to ask next time." |
-| 2:05–2:20 | Print preview, then back to **Your recipes** | "Print it, and it's saved in Your recipes." |
-| 2:20–2:45 | Optional: show the `devpost/` docs in the repo | "I built this plan-first. Scope, requirements and a technical spec came before any code, which caught things like iPhone Chrome not supporting speech recognition before I'd written a line." |
+| 0:00–0:15 | Home: "A pinch of this. A lifetime of that." | "My grandmother never measures anything. It's 'a splash of this', 'cook it till it's golden'. Apps that record her and extract a recipe afterwards keep those vague parts vague, because by then she's left the kitchen." |
+| 0:15–0:25 | **Capture a family recipe** → enter the dish and cook → **Let's start cooking** | "Pinch asks while she's still cooking." |
+| 0:25–0:45 | Mic: a clear step, like "Crack two eggs into the bowl" → tick | "When a step is clear, Pinch stays quiet." |
+| 0:45–1:15 | Mic: "Add a splash of milk, not too much" → the big question, read aloud → answer "About three quarters of a cup" | "When something's vague, it asks one question. Her answer is what goes on the card." |
+| 1:15–1:30 | Mic: "Melt a knob of butter…" → answer "I don't know, I do it by feel" | "And 'I don't know' is fine. No arguing. It goes on a Still unknown list." |
+| 1:30–2:05 | **Create recipe card** → the card | "Her words and reasons, right on the card. Every amount came from her. Pinch never invents an amount: code on the server checks every number against what she actually said. And here's what we still need to ask next time." |
+| 2:05–2:25 | **Cook this recipe** checklist, then **Back to recipe book** | "Cook along with it, print it or download it, and it lives in the family recipe book." |
+| 2:25–2:45 | Optional: the `devpost/` docs in the repo | "I built this plan-first. Scope, requirements and a technical spec came before any code, which caught things like iPhone Chrome not supporting speech recognition before I'd written a line." |

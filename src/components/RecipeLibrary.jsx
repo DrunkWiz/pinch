@@ -88,7 +88,7 @@ export default function RecipeLibrary({
                 <div className="recipe-summary">
                   <h3>{r.card.title}</h3>
                   <p>
-                    {r.card.method.length} steps <span>·</span>{' '}
+                    {r.card.method.length} {r.card.method.length === 1 ? 'step' : 'steps'} <span>·</span>{' '}
                     {new Date(r.savedAt).toLocaleDateString(undefined, {
                       month: 'short',
                       day: 'numeric',
@@ -99,7 +99,7 @@ export default function RecipeLibrary({
                     className={`recipe-status ${r.card.stillUnknown.length ? 'pending' : ''}`}
                   >
                     {r.card.stillUnknown.length
-                      ? `${r.card.stillUnknown.length} details to revisit`
+                      ? `${r.card.stillUnknown.length} ${r.card.stillUnknown.length === 1 ? 'detail' : 'details'} to revisit`
                       : 'Every detail kept'}{' '}
                     <Icon name="arrow" size={16} />
                   </span>
