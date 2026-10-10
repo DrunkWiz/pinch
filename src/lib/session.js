@@ -26,7 +26,13 @@ export const currentStep = (s) => {
   return last && !last.closed ? last : null
 }
 
-export const newStepId = () => `step-${globalThis.crypto.randomUUID()}`
+// crypto.randomUUID only exists on secure pages (https or localhost). Over plain
+// http (e.g. a LAN address) fall back, so sending a step never crashes.
+let stepCounter = 0
+export const newStepId = () =>
+  typeof globalThis.crypto?.randomUUID === 'function'
+    ? `step-${globalThis.crypto.randomUUID()}`
+    : `step-${Date.now().toString(36)}-${(++stepCounter).toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 
 const updateStep = (s, id, fn) => ({
   ...s,

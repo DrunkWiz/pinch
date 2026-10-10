@@ -104,3 +104,19 @@ describe('lost connection', () => {
     expect(s.toast).toMatch(/lost connection/)
   })
 })
+
+describe('step ids', () => {
+  it('still works where crypto.randomUUID is unavailable (plain http pages)', async () => {
+    const { newStepId } = await import('./session.js')
+    const original = globalThis.crypto.randomUUID
+    try {
+      Object.defineProperty(globalThis.crypto, 'randomUUID', { value: undefined, configurable: true })
+      const a = newStepId()
+      const b = newStepId()
+      expect(a).toMatch(/^step-/)
+      expect(a).not.toBe(b)
+    } finally {
+      Object.defineProperty(globalThis.crypto, 'randomUUID', { value: original, configurable: true })
+    }
+  })
+})

@@ -12,3 +12,6 @@ dist/
 
 # Local Claude Code settings
 .claude/
+
+# Demo video (upload to YouTube/Vimeo, not git)
+demo-video/
