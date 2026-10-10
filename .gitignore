@@ -15,3 +15,7 @@ dist/
 
 # Demo video (upload to YouTube/Vimeo, not git)
 demo-video/
+
+# Devpost submission drafts (local only, never commit)
+devpost/submission.md
+devpost/additional-info.md
