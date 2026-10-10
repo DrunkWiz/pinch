@@ -6,6 +6,8 @@ Most recipe-keeping apps record first and extract afterwards. By the time they n
 
 **Pinch never guesses an amount.** Gemini decides *what to ask*. Plain server code ([`server/neverGuess.js`](server/neverGuess.js)) checks every amount, number and quote on the card against what the cook actually said. Anything it can't trace becomes "amount unknown" and goes on the Still unknown list.
 
+**Live demo:** https://pinch-htpl.onrender.com (free hosting, so the first load may take up to a minute)
+
 ## How it works
 
 ```

@@ -99,7 +99,7 @@ Plus your demo video (script below).
 ## Links
 
 - **Repository:** https://github.com/DrunkWiz/pinch
-- **Live demo:** none. Pinch runs locally (`npm run dev`); see the README. Optionally say: "Runs locally; see the demo video and README to run it."
+- **Live demo:** https://pinch-htpl.onrender.com (hosted on Render's free plan, so the first visit after a quiet spell can take 30–60 seconds to wake up). "See an example" works with no setup. Live AI questions need the Gemini key set on the server; without it, Pinch runs in notes mode.
 
 ---
 
@@ -111,7 +111,7 @@ Solo: **[your name]**, in every role: product, design, development and testing (
 
 ## Honesty notes: don't claim these
 
-- **Don't say "tested on iPhone".** It was tested in a mobile-sized browser view on a laptop. Real-phone use needs the HTTPS tunnel in the README, and that hasn't been tried.
+- **Don't say "tested on iPhone"** unless you've opened the live link on your iPhone and tried it. Until then, it has only been tested in a mobile-sized browser view on a laptop.
 - **Don't quote transcription accuracy numbers.** They weren't measured.
 - **Only claim English.** No other languages were tested.
 - **Don't claim cloud sync, accounts or sharing.** Recipes save on one device only.
